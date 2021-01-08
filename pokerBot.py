@@ -1,81 +1,66 @@
-"""
-HydRC4nics bot
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# pylint: disable=W0613, C0116
+# type: ignore[union-attr]
+# This program is dedicated to the public domain under the CC0 license.
 
-Allows users to send commands (if they are administrators) and view data from RC4's smart hydroponics garden
+"""
+Simple Bot to reply to Telegram messages.
+First, a few handler functions are defined. Then, those functions are passed to
+the Dispatcher and registered at their respective places.
+Then, the bot is started and runs until we press Ctrl-C on the command line.
+Usage:
+Basic Echobot example, repeats messages.
+Press Ctrl-C on the command line or send a signal to the process to stop the
+bot.
 """
 
 import logging
 
-from telegram import InlineKeyboardMarkup, InlineKeyboardButton, ParseMode, CallbackQuery
-from telegram.ext import Updater, CommandHandler, MessageHandler, CallbackQueryHandler, ConversationHandler, Filters
-
-from . import handlers as hl
-
-from .. import config
-from .. import db
+from telegram import Update
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
 
 # Enable logging
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                    level=logging.INFO)
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
+)
 
 logger = logging.getLogger(__name__)
 
 
-# TOKEN to communicate with the correct bot
-TOKEN = "1578758398:AAGnbbNlC8K1AAsLo69-0dcGypgVrYSiWww"
+# Define a few command handlers. These usually take the two arguments update and
+# context. Error handlers also receive the raised TelegramError object in error.
+def start(update: Update, context: CallbackContext) -> None:
+    """Send a message when the command /start is issued."""
+    update.message.reply_text('Hi!')
 
 
-"""
-Various functions
-"""
+def help_command(update: Update, context: CallbackContext) -> None:
+    """Send a message when the command /help is issued."""
+    update.message.reply_text('Help!')
 
-def error(update, context):
-    """Log Errors caused by Updates."""
-    logger.warning('Update "%s" caused error "%s"', update, context.error)
 
+def echo(update: Update, context: CallbackContext) -> None:
+    """Echo the user message."""
+    update.message.reply_text(update.message.text)
 
 
 def main():
-
     """Start the bot."""
-    # Create the Updater and pass it your bogit oullt's token.
+    # Create the Updater and pass it your bot's token.
     # Make sure to set use_context=True to use the new context based callbacks
     # Post version 12 this will no longer be necessary
-    updater = Updater(TOKEN, use_context=True)
+    updater = Updater("1578758398:AAGnbbNlC8K1AAsLo69-0dcGypgVrYSiWww", use_context=True)
 
     # Get the dispatcher to register handlers
-    dp = updater.dispatcher
+    dispatcher = updater.dispatcher
 
     # on different commands - answer in Telegram
-    dp.add_handler(ConversationHandler(
-                                        entry_points=[CommandHandler('start', hl.start)],
-                                        states={
-                                                hl.INITIAL: [CallbackQueryHandler(hl.startOver)],
+    dispatcher.add_handler(CommandHandler("start", start))
+    dispatcher.add_handler(CommandHandler("help", help_command))
 
-                                                hl.START: [CallbackQueryHandler(hl.startHandler)],
-
-                                                hl.ACTUATORS: [CallbackQueryHandler(hl.startOver, pattern='^START$'),
-                                                               CallbackQueryHandler(hl.ActuatorsHandler)],
-
-                                                hl.COMMAND: [CallbackQueryHandler(hl.startOver, pattern='^START$'),
-                                                             MessageHandler(Filters.text & (~Filters.command), hl.commandHandler)],
-
-                                                hl.DATA: [CallbackQueryHandler(hl.startOver, pattern = '^START$'),
-                                                          CallbackQueryHandler(hl.dataHandler)],
-
-                                                hl.SENSORS: [CallbackQueryHandler(hl.startOver, pattern='^START$'),
-                                                             CallbackQueryHandler(hl.sensorsHandler)],
-                                                
-                                                hl.READINGS: [CallbackQueryHandler(hl.startOver, pattern='^START$'),
-                                                              MessageHandler(Filters.text & (~Filters.command), hl.readingsHandler)],
-                                                },
-                                        fallbacks=[CommandHandler('start', hl.start)]
-                                        )
-                    )
-
-
-    # log all errors
-    dp.add_error_handler(error)
+    # on noncommand i.e message - echo the message on Telegram
+    dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, echo))
 
     # Start the Bot
     updater.start_polling()
