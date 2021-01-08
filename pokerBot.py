@@ -35,7 +35,7 @@ def main():
     # Create the Updater and pass it your bot's token.
     # Make sure to set use_context=True to use the new context based callbacks
     # Post version 12 this will no longer be necessary
-    
+
     token = os.environ.get("POKER_BOT_TOKEN")
 
     updater = Updater(token, use_context=True)
@@ -51,9 +51,11 @@ def main():
                                                 handlers.PREFLOP: [MessageHandler(Filters.text & ~Filters.command, handlers.preFlopHandler),
                                                                    CallbackQueryHandler(handlers.helpHandler)],
 
-                                                handlers.FLOP: [MessageHandler(Filters.text & ~Filters.command, handlers.flopHandler)],
+                                                handlers.FLOP: [MessageHandler(Filters.text & ~Filters.command, handlers.flopHandler),
+                                                                CallbackQueryHandler(handlers.start)],
 
-                                                handlers.TURN: [MessageHandler(Filters.text & ~Filters.command, handlers.turnHandler)],
+                                                handlers.TURN: [MessageHandler(Filters.text & ~Filters.command, handlers.turnHandler),
+                                                                CallbackQueryHandler(handlers.start)],
                                                 },
                                         fallbacks=[CommandHandler('start', handlers.start)]
                                         )
