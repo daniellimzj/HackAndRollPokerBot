@@ -6,6 +6,7 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, CallbackQueryH
 
 import menus as menus
 import cardParser as cardParser
+import oddsCalculator as oddsCalc
 
 
 START, PREFLOP, FLOP, TURN, END = range(5)
@@ -54,7 +55,26 @@ def preFlopHandler(update, context):
     
     knownCards.extend(cards)
 
-    context.bot.send_message(text = f'The cards in your hand are <b>{cards[0]}</b> and <b>{cards[1]}</b>. Probabilities: Now enter the cards in the flop, or press the back to start button to start a new round:',
+    oddsOfPair = oddsCalc.findPairOdds(knownCards, "preflop")
+    oddsOfTrips = oddsCalc.findTripsOdds(knownCards, "preflop")
+    oddsOfFlush = oddsCalc.findFlushOdds(knownCards, "preflop")
+
+    text = f'The cards in your hand are <b>{cards[0]}</b> and <b>{cards[1]}</b>' + ".\n\n"
+
+    text += "<b>Probabilities:</b>\n"
+
+    if (oddsOfPair):
+        text += "Pair: " + str(oddsOfPair) + "%\n"
+
+    if (oddsOfTrips):
+        text += "Three of a Kind: " + str(oddsOfTrips) + "%\n"
+    
+    if (oddsOfFlush):
+        text += "Flush: " + str(oddsOfFlush) + "%\n"
+    
+    text += "\nNow enter the cards in the flop, or press the back to start button to start a new round:"
+
+    context.bot.send_message(text = text,
                             chat_id = chatid,
                             parse_mode = ParseMode.HTML,
                             reply_markup = InlineKeyboardMarkup(menus.startMenu))
@@ -82,7 +102,26 @@ def flopHandler(update, context):
 
     knownCards.extend(cards)
 
-    context.bot.send_message(text = f'The cards in the flop are <b>{cards[0]}</b>, <b>{cards[1]}</b> and <b>{cards[2]}</b>. Probabilities: . Now enter the turn card, or press the back to start button to start a new round:',
+    oddsOfPair = oddsCalc.findPairOdds(knownCards, "postflop")
+    oddsOfTrips = oddsCalc.findTripsOdds(knownCards, "postflop")
+    oddsOfFlush = oddsCalc.findFlushOdds(knownCards, "postflop")
+
+    text = f'The cards in the flop are <b>{cards[0]}</b>, <b>{cards[1]}</b> and <b>{cards[2]}</b>.' + "\n\n"
+
+    text += "<b>Probabilities:</b>\n"
+
+    if (oddsOfPair):
+        text += "Pair: " + str(oddsOfPair) + "%\n"
+
+    if (oddsOfTrips):
+        text += "Three of a Kind: " + str(oddsOfTrips) + "%\n"
+    
+    if (oddsOfFlush):
+        text += "Flush: " + str(oddsOfFlush) + "%\n"
+    
+    text += "\nNow enter the turn card, or press the back to start button to start a new round:"
+
+    context.bot.send_message(text = text,
                              chat_id = chatid,
                              parse_mode = ParseMode.HTML,
                              reply_markup = InlineKeyboardMarkup(menus.startMenu))
@@ -107,8 +146,29 @@ def turnHandler(update, context):
                                 parse_mode = ParseMode.HTML,
                                 reply_markup = InlineKeyboardMarkup(menus.startMenu))
         return TURN
+    
+    knownCards.append(card)
 
-    context.bot.send_message(text = f'The card in the turn is <b>{card}</b>.',
+    oddsOfPair = oddsCalc.findPairOdds(knownCards, "turn")
+    oddsOfTrips = oddsCalc.findTripsOdds(knownCards, "turn")
+    oddsOfFlush = oddsCalc.findFlushOdds(knownCards, "turn")
+
+    text = f"The turn card is <b>{card}</b>." + "\n\n"
+
+    text += "<b>Probabilities:</b>\n"
+
+    if (oddsOfPair):
+        text += "Pair: " + str(oddsOfPair) + "%\n"
+
+    if (oddsOfTrips):
+        text += "Three of a Kind: " + str(oddsOfTrips) + "%\n"
+    
+    if (oddsOfFlush):
+        text += "Flush: " + str(oddsOfFlush) + "%\n"
+    
+    text += "\nPress the back to start button to start a new round:"
+
+    context.bot.send_message(text = text,
                              chat_id = chatid,
                              parse_mode = ParseMode.HTML,
                              reply_markup = InlineKeyboardMarkup(menus.startMenu))
