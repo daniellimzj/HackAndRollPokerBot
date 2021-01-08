@@ -9,6 +9,5 @@ def build_menu(buttons, n_cols, header_buttons=None, footer_buttons=None):
         menu.append([footer_buttons])
     return menu
 
-menu = build_menu([InlineKeyboardButton(text = "Dummy button", callback_data = "DUMMY")], n_cols = 1, header_buttons= None, footer_buttons=None)
-
-
+helpMenu = build_menu([InlineKeyboardButton(text = "Help!", callback_data = "help")], n_cols = 1, header_buttons= None, footer_buttons=None)
+startMenu = build_menu([InlineKeyboardButton(text = "Back to Start", callback_data = "start")], n_cols = 1, header_buttons= None, footer_buttons=None)

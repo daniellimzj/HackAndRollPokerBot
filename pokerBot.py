@@ -44,11 +44,12 @@ def main():
                                         states={
                                                 handlers.START: [CallbackQueryHandler(handlers.start)],
 
-                                                handlers.PREFLOP: [CallbackQueryHandler(handlers.preFlopHandler)],
+                                                handlers.PREFLOP: [MessageHandler(Filters.text & ~Filters.command, handlers.preFlopHandler),
+                                                                   CallbackQueryHandler(handlers.helpHandler)],
 
-                                                handlers.FLOP: [CallbackQueryHandler(handlers.flopHandler)],
+                                                handlers.FLOP: [MessageHandler(Filters.text & ~Filters.command, handlers.flopHandler)],
 
-                                                handlers.TURN: [CallbackQueryHandler(handlers.turnHandler)],
+                                                handlers.TURN: [MessageHandler(Filters.text & ~Filters.command, handlers.turnHandler)],
                                                 },
                                         fallbacks=[CommandHandler('start', handlers.start)]
                                         )

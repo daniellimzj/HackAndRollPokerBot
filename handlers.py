@@ -6,30 +6,34 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, CallbackQueryH
 
 import menus as menus
 
-START, PREFLOP, FLOP, TURN = range(4)
+START, PREFLOP, FLOP, TURN, END = range(5)
+
+
 
 def start(update, context):
 
-    # Some initialisation
     global user
     global chatid
-    user = update.message.from_user
-    chatid = update.message.chat.id
+
+    # Some initialisation
+    if (update.message):
+        user = update.message.from_user
+        chatid = update.message.chat.id
 
     #Actual message
-    context.bot.send_message(text = f'Start! Please enter the cards in your hand.',
+    context.bot.send_message(text = f'Start! Please enter the cards in your hand, or use the help button!',
                              chat_id = chatid,
                              parse_mode = ParseMode.HTML,
-                             reply_markup = InlineKeyboardMarkup(menus.menu))
+                             reply_markup = InlineKeyboardMarkup(menus.helpMenu))
     return PREFLOP
 
 def preFlopHandler(update, context):
 
-    query = update.callback_query
+    message = update.message.text
     context.bot.send_message(text = f'PREFLOP',
                              chat_id = chatid,
                              parse_mode = ParseMode.HTML,
-                             reply_markup = InlineKeyboardMarkup(menus.menu))
+                             reply_markup = InlineKeyboardMarkup(menus.startMenu))
     return FLOP
 
 def flopHandler(update, context):
@@ -38,7 +42,7 @@ def flopHandler(update, context):
     context.bot.send_message(text = f'FLOP',
                              chat_id = chatid,
                              parse_mode = ParseMode.HTML,
-                             reply_markup = InlineKeyboardMarkup(menus.menu))
+                             reply_markup = InlineKeyboardMarkup(menus.startMenu))
     return TURN
 
 def turnHandler(update, context):
@@ -47,5 +51,14 @@ def turnHandler(update, context):
     context.bot.send_message(text = f'TURN',
                              chat_id = chatid,
                              parse_mode = ParseMode.HTML,
-                             reply_markup = InlineKeyboardMarkup(menus.menu))
+                             reply_markup = InlineKeyboardMarkup(menus.startMenu))
     return START
+
+def helpHandler(update, context):
+
+    context.bot.send_message(text = f'HELP',
+                             chat_id = chatid,
+                             parse_mode = ParseMode.HTML,
+                             reply_markup = InlineKeyboardMarkup(menus.startMenu))
+    return START
+    
