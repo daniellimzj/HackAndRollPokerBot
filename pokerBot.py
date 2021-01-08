@@ -16,6 +16,7 @@ bot.
 """
 
 import logging
+import os
 
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton, ParseMode, CallbackQuery
 from telegram.ext import Updater, CommandHandler, MessageHandler, CallbackQueryHandler, ConversationHandler, Filters
@@ -34,13 +35,10 @@ def main():
     # Create the Updater and pass it your bot's token.
     # Make sure to set use_context=True to use the new context based callbacks
     # Post version 12 this will no longer be necessary
+    
+    token = os.environ.get("POKER_BOT_TOKEN")
 
-
-    with open ("token.txt", "r") as file:
-        token = file.readlines()
-        print(token)
-
-    updater = Updater(token[0], use_context=True)
+    updater = Updater(token, use_context=True)
 
     # Get the dispatcher to register handlers
     dispatcher = updater.dispatcher
