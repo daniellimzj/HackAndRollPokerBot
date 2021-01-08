@@ -17,8 +17,10 @@ bot.
 
 import logging
 
-from telegram import Update
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
+from telegram import InlineKeyboardMarkup, InlineKeyboardButton, ParseMode, CallbackQuery
+from telegram.ext import Updater, CommandHandler, MessageHandler, CallbackQueryHandler, ConversationHandler, Filters
+
+import handlers as handlers
 
 # Enable logging
 logging.basicConfig(
@@ -26,24 +28,6 @@ logging.basicConfig(
 )
 
 logger = logging.getLogger(__name__)
-
-
-# Define a few command handlers. These usually take the two arguments update and
-# context. Error handlers also receive the raised TelegramError object in error.
-def start(update: Update, context: CallbackContext) -> None:
-    """Send a message when the command /start is issued."""
-    update.message.reply_text('Hello! Welcome to the bot that will increase your chances of winning at poker!')
-
-
-def help_command(update: Update, context: CallbackContext) -> None:
-    """Send a message when the command /help is issued."""
-    update.message.reply_text('Help!')
-
-
-def echo(update: Update, context: CallbackContext) -> None:
-    """Echo the user message."""
-    update.message.reply_text(update.message.text)
-
 
 def main():
     """Start the bot."""
@@ -55,36 +39,18 @@ def main():
     # Get the dispatcher to register handlers
     dispatcher = updater.dispatcher
 
-    # on different commands - answer in Telegram
-    dispatcher.add_handler(CommandHandler("start", start))
-    dispatcher.add_handler(CommandHandler("help", help_command))
-
-    # on noncommand i.e message - echo the message on Telegram
-    dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, echo))
-
-    dp.add_handler(ConversationHandler(
-                                        entry_points=[CommandHandler('start', hl.start)],
+    dispatcher.add_handler(ConversationHandler(
+                                        entry_points=[CommandHandler('start', handlers.start)],
                                         states={
-                                                hl.INITIAL: [CallbackQueryHandler(hl.startOver)],
+                                                handlers.START: [CallbackQueryHandler(handlers.start)],
 
-                                                hl.START: [CallbackQueryHandler(hl.startHandler)],
+                                                handlers.PREFLOP: [CallbackQueryHandler(handlers.preFlopHandler)],
 
-                                                hl.ACTUATORS: [CallbackQueryHandler(hl.startOver, pattern='^START$'),
-                                                               CallbackQueryHandler(hl.ActuatorsHandler)],
+                                                handlers.FLOP: [CallbackQueryHandler(handlers.flopHandler)],
 
-                                                hl.COMMAND: [CallbackQueryHandler(hl.startOver, pattern='^START$'),
-                                                             MessageHandler(Filters.text & (~Filters.command), hl.commandHandler)],
-
-                                                hl.DATA: [CallbackQueryHandler(hl.startOver, pattern = '^START$'),
-                                                          CallbackQueryHandler(hl.dataHandler)],
-
-                                                hl.SENSORS: [CallbackQueryHandler(hl.startOver, pattern='^START$'),
-                                                             CallbackQueryHandler(hl.sensorsHandler)],
-                                                
-                                                hl.READINGS: [CallbackQueryHandler(hl.startOver, pattern='^START$'),
-                                                              MessageHandler(Filters.text & (~Filters.command), hl.readingsHandler)],
+                                                handlers.TURN: [CallbackQueryHandler(handlers.turnHandler)],
                                                 },
-                                        fallbacks=[CommandHandler('start', hl.start)]
+                                        fallbacks=[CommandHandler('start', handlers.start)]
                                         )
                     )
 
