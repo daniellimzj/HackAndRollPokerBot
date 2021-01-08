@@ -32,7 +32,7 @@ logger = logging.getLogger(__name__)
 # context. Error handlers also receive the raised TelegramError object in error.
 def start(update: Update, context: CallbackContext) -> None:
     """Send a message when the command /start is issued."""
-    update.message.reply_text('Hi!')
+    update.message.reply_text('Hello! Welcome to the bot that will increase your chances of winning at poker!')
 
 
 def help_command(update: Update, context: CallbackContext) -> None:
@@ -61,6 +61,32 @@ def main():
 
     # on noncommand i.e message - echo the message on Telegram
     dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, echo))
+
+    dp.add_handler(ConversationHandler(
+                                        entry_points=[CommandHandler('start', hl.start)],
+                                        states={
+                                                hl.INITIAL: [CallbackQueryHandler(hl.startOver)],
+
+                                                hl.START: [CallbackQueryHandler(hl.startHandler)],
+
+                                                hl.ACTUATORS: [CallbackQueryHandler(hl.startOver, pattern='^START$'),
+                                                               CallbackQueryHandler(hl.ActuatorsHandler)],
+
+                                                hl.COMMAND: [CallbackQueryHandler(hl.startOver, pattern='^START$'),
+                                                             MessageHandler(Filters.text & (~Filters.command), hl.commandHandler)],
+
+                                                hl.DATA: [CallbackQueryHandler(hl.startOver, pattern = '^START$'),
+                                                          CallbackQueryHandler(hl.dataHandler)],
+
+                                                hl.SENSORS: [CallbackQueryHandler(hl.startOver, pattern='^START$'),
+                                                             CallbackQueryHandler(hl.sensorsHandler)],
+                                                
+                                                hl.READINGS: [CallbackQueryHandler(hl.startOver, pattern='^START$'),
+                                                              MessageHandler(Filters.text & (~Filters.command), hl.readingsHandler)],
+                                                },
+                                        fallbacks=[CommandHandler('start', hl.start)]
+                                        )
+                    )
 
     # Start the Bot
     updater.start_polling()
