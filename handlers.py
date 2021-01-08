@@ -19,7 +19,6 @@ def start(update, context):
     global knownCards
 
     knownCards = []
-    print(knownCards)
 
     # Some initialisation
     if (update.message):
@@ -54,9 +53,8 @@ def preFlopHandler(update, context):
         return PREFLOP
     
     knownCards.extend(cards)
-    print(knownCards)
 
-    context.bot.send_message(text = f'The cards in your hand are <b>{cards[0]}</b> and <b>{cards[1]}</b>',
+    context.bot.send_message(text = f'The cards in your hand are <b>{cards[0]}</b> and <b>{cards[1]}</b>. Probabilities: Now enter the cards in the flop, or press the back to start button to start a new round:',
                             chat_id = chatid,
                             parse_mode = ParseMode.HTML,
                             reply_markup = InlineKeyboardMarkup(menus.startMenu))
@@ -84,7 +82,7 @@ def flopHandler(update, context):
 
     knownCards.extend(cards)
 
-    context.bot.send_message(text = f'The cards in the flop are <b>{cards[0]}</b>, <b>{cards[1]}</b> and <b>{cards[2]}</b>',
+    context.bot.send_message(text = f'The cards in the flop are <b>{cards[0]}</b>, <b>{cards[1]}</b> and <b>{cards[2]}</b>. Probabilities: . Now enter the turn card, or press the back to start button to start a new round:',
                              chat_id = chatid,
                              parse_mode = ParseMode.HTML,
                              reply_markup = InlineKeyboardMarkup(menus.startMenu))
@@ -110,7 +108,7 @@ def turnHandler(update, context):
                                 reply_markup = InlineKeyboardMarkup(menus.startMenu))
         return TURN
 
-    context.bot.send_message(text = f'The card in the turn is <b>{card}</b>,',
+    context.bot.send_message(text = f'The card in the turn is <b>{card}</b>.',
                              chat_id = chatid,
                              parse_mode = ParseMode.HTML,
                              reply_markup = InlineKeyboardMarkup(menus.startMenu))
