@@ -33,17 +33,18 @@ def preFlopHandler(update, context):
 
     message = update.message.text
 
-    card = cardParser.getCardValue(message)
+    cards = cardParser.parseCardsInHand(message)
 
-    if (card == "error"):
+    if (cards == "error"):
         context.bot.send_message(text = f'Error! Try again!',
                                 chat_id = chatid,
                                 parse_mode = ParseMode.HTML,
                                 reply_markup = InlineKeyboardMarkup(menus.startMenu))
         return PREFLOP
     
-    context.bot.send_message(text = card,
-                            chat_id = chatid,
+    context.bot.send_message(text = f'Your cards are <b>{cards[0]}</b> and <b>{cards[1]}</b>',
+                            chat_id = chatid
+                            ,
                             parse_mode = ParseMode.HTML,
                             reply_markup = InlineKeyboardMarkup(menus.startMenu))
     return FLOP
