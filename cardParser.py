@@ -6,7 +6,7 @@ CARDS_IN_HAND = 2
 CARDS_IN_FLOP = 3
 CARDS_IN_TURN = 1
 
-numbers = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"]
+numbers = ["2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A"]
 suits = {
     "C": "♣️",
     "D": "♦️",
@@ -29,6 +29,7 @@ def parseCardsInHand(userInput):
     return firstHandCard, secondHandCard
 
 
+
 def parseCardsInFlop(userInput):
     
     cards = userInput.split()
@@ -41,10 +42,12 @@ def parseCardsInFlop(userInput):
     thirdFlopCard = parseCardValue(cards[2])
 
     if (firstFlopCard == "error" or secondFlopCard == "error" or thirdFlopCard == "error"):
-        
+
         return "error"
 
     return firstFlopCard, secondFlopCard, thirdFlopCard
+
+
 
 def parseCardsInTurn(userInput):
 
@@ -60,6 +63,8 @@ def parseCardsInTurn(userInput):
     
     return turnCard
 
+
+
 def parseCardValue(card):
 
     if (len(card) != 2):
@@ -69,6 +74,7 @@ def parseCardValue(card):
         return "error"
 
     return card[NUMBER] + suits[card[SUIT].upper()]
+
 
 
 def isCorrectNumberOfCards(correctNumber, cards):

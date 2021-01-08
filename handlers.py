@@ -56,7 +56,7 @@ def preFlopHandler(update, context):
     knownCards.extend(cards)
     print(knownCards)
 
-    context.bot.send_message(text = f'Your cards are <b>{cards[0]}</b> and <b>{cards[1]}</b>',
+    context.bot.send_message(text = f'The cards in your hand are <b>{cards[0]}</b> and <b>{cards[1]}</b>',
                             chat_id = chatid,
                             parse_mode = ParseMode.HTML,
                             reply_markup = InlineKeyboardMarkup(menus.startMenu))
@@ -84,7 +84,7 @@ def flopHandler(update, context):
 
     knownCards.extend(cards)
 
-    context.bot.send_message(text = f'Your cards are <b>{cards[0]}</b>, <b>{cards[1]}</b> and <b>{cards[2]}</b>',
+    context.bot.send_message(text = f'The cards in the flop are <b>{cards[0]}</b>, <b>{cards[1]}</b> and <b>{cards[2]}</b>',
                              chat_id = chatid,
                              parse_mode = ParseMode.HTML,
                              reply_markup = InlineKeyboardMarkup(menus.startMenu))
@@ -110,7 +110,7 @@ def turnHandler(update, context):
                                 reply_markup = InlineKeyboardMarkup(menus.startMenu))
         return TURN
 
-    context.bot.send_message(text = f'Your card is <b>{card}</b>,',
+    context.bot.send_message(text = f'The card in the turn is <b>{card}</b>,',
                              chat_id = chatid,
                              parse_mode = ParseMode.HTML,
                              reply_markup = InlineKeyboardMarkup(menus.startMenu))
@@ -118,15 +118,17 @@ def turnHandler(update, context):
 
 def helpHandler(update, context):
 
-    context.bot.send_message(text = f'HELP',
-                             chat_id = chatid,
-                             parse_mode = ParseMode.HTML,
-                             reply_markup = InlineKeyboardMarkup(menus.startMenu))
+    query = update.callback_query
+
+    if (query.data == "help"):
+        context.bot.send_message(text = f'HELP',
+                                 chat_id = chatid,
+                                 parse_mode = ParseMode.HTML,
+                                 reply_markup = InlineKeyboardMarkup(menus.startMenu))
+
     return START
 
-def startOverHandler(update, context):
 
-    
 
 def isHandValid(cards):
     return (cards[0] != cards[1] and cards[0] not in knownCards and cards[1] not in knownCards) 
