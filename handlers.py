@@ -5,6 +5,8 @@ from telegram import InlineKeyboardMarkup, InlineKeyboardButton, ParseMode, Call
 from telegram.ext import Updater, CommandHandler, MessageHandler, CallbackQueryHandler, ConversationHandler, Filters
 
 import menus as menus
+import cardParser as cardParser
+
 
 START, PREFLOP, FLOP, TURN, END = range(5)
 
@@ -30,10 +32,20 @@ def start(update, context):
 def preFlopHandler(update, context):
 
     message = update.message.text
-    context.bot.send_message(text = f'PREFLOP',
-                             chat_id = chatid,
-                             parse_mode = ParseMode.HTML,
-                             reply_markup = InlineKeyboardMarkup(menus.startMenu))
+
+    card = cardParser.getCardValue(message)
+
+    if (card == "error"):
+        context.bot.send_message(text = f'Error! Try again!',
+                                chat_id = chatid,
+                                parse_mode = ParseMode.HTML,
+                                reply_markup = InlineKeyboardMarkup(menus.startMenu))
+        return PREFLOP
+    
+    context.bot.send_message(text = card,
+                            chat_id = chatid,
+                            parse_mode = ParseMode.HTML,
+                            reply_markup = InlineKeyboardMarkup(menus.startMenu))
     return FLOP
 
 def flopHandler(update, context):
