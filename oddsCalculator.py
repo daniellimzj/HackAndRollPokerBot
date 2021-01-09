@@ -68,6 +68,36 @@ def findTripsOdds(knownCards, stage):
     else:
         return round(PERCENT * CARDS_LEFT_POST_TURN * 2 / 46, 2)
 
+def findQuadsOdds(knownCards, stage):
+
+    cardValues = [card[0] for card in knownCards]
+
+    result = {}
+
+    for value in cardValues:
+        if value in result:
+            result[value] += 1
+        else:
+            result[value] = 1
+    
+    for key in result:
+        if result[key] > 4:
+            return 0
+        elif result[key] == 4:
+            return 100
+    
+    if (findTripsOdds(knownCards, stage) != 100):
+        return 0
+
+    if (stage == "preflop"):
+        return 0
+
+    elif (stage == "postflop"):
+        return round((PERCENT * CARDS_LEFT_POST_FLOP * 1)  / 47, 2)
+    
+    else:
+        return round((PERCENT * CARDS_LEFT_POST_TURN * 1) / 46, 2)
+
 def findFlushOdds(knownCards, stage):
 
     cardSuits = [card[1] for card in knownCards]
@@ -80,6 +110,9 @@ def findFlushOdds(knownCards, stage):
             result[suit] = 1
     
     largestNumberOfSuitedCards = max(list(result.values()))
+
+    if (largestNumberOfSuitedCards == 5):
+        return 100
 
     if (stage == "preflop" and largestNumberOfSuitedCards == 2):
         return 6.4
