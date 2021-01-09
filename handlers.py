@@ -58,19 +58,23 @@ def preFlopHandler(update, context):
     oddsOfPair = oddsCalc.findPairOdds(knownCards, "preflop")
     oddsOfTrips = oddsCalc.findTripsOdds(knownCards, "preflop")
     oddsOfFlush = oddsCalc.findFlushOdds(knownCards, "preflop")
+    oddsOfQuads = oddsCalc.findQuadsOdds(knownCards, "preflop")
 
     text = f'The cards in your hand are <b>{cards[0]}</b> and <b>{cards[1]}</b>' + ".\n\n"
 
     text += "<b>Probabilities:</b>\n"
 
-    if (oddsOfPair):
+    if (oddsOfPair and oddsOfTrips != 100 and oddsOfFlush != 100 and oddsOfQuads != 100):
         text += "Pair: " + str(oddsOfPair) + "%\n"
 
-    if (oddsOfTrips):
+    if (oddsOfTrips and oddsOfFlush != 100 and oddsOfQuads != 100):
         text += "Three of a Kind: " + str(oddsOfTrips) + "%\n"
     
-    if (oddsOfFlush):
+    if (oddsOfFlush and oddsOfQuads != 100):
         text += "Flush: " + str(oddsOfFlush) + "%\n"
+    
+    if (oddsOfQuads):
+        text += "Quads: " + str(oddsOfQuads) + "%\n"
     
     text += "\nNow enter the cards in the flop, or press the back to start button to start a new round:"
 
@@ -105,19 +109,23 @@ def flopHandler(update, context):
     oddsOfPair = oddsCalc.findPairOdds(knownCards, "postflop")
     oddsOfTrips = oddsCalc.findTripsOdds(knownCards, "postflop")
     oddsOfFlush = oddsCalc.findFlushOdds(knownCards, "postflop")
+    oddsOfQuads = oddsCalc.findQuadsOdds(knownCards, "postflop")
 
     text = f'The cards in the flop are <b>{cards[0]}</b>, <b>{cards[1]}</b> and <b>{cards[2]}</b>.' + "\n\n"
 
     text += "<b>Probabilities:</b>\n"
 
-    if (oddsOfPair):
+    if (oddsOfPair and oddsOfTrips != 100 and oddsOfFlush != 100 and oddsOfQuads != 100):
         text += "Pair: " + str(oddsOfPair) + "%\n"
 
-    if (oddsOfTrips):
+    if (oddsOfTrips and oddsOfFlush != 100 and oddsOfQuads != 100):
         text += "Three of a Kind: " + str(oddsOfTrips) + "%\n"
     
-    if (oddsOfFlush):
+    if (oddsOfFlush and oddsOfQuads != 100):
         text += "Flush: " + str(oddsOfFlush) + "%\n"
+    
+    if (oddsOfQuads):
+        text += "Quads: " + str(oddsOfQuads) + "%\n"
     
     text += "\nNow enter the turn card, or press the back to start button to start a new round:"
 
@@ -152,19 +160,23 @@ def turnHandler(update, context):
     oddsOfPair = oddsCalc.findPairOdds(knownCards, "turn")
     oddsOfTrips = oddsCalc.findTripsOdds(knownCards, "turn")
     oddsOfFlush = oddsCalc.findFlushOdds(knownCards, "turn")
+    oddsOfQuads = oddsCalc.findQuadsOdds(knownCards, "turn")
 
     text = f"The turn card is <b>{card}</b>." + "\n\n"
 
     text += "<b>Probabilities:</b>\n"
 
-    if (oddsOfPair):
+    if (oddsOfPair and oddsOfTrips != 100 and oddsOfFlush != 100 and oddsOfQuads != 100):
         text += "Pair: " + str(oddsOfPair) + "%\n"
 
-    if (oddsOfTrips):
+    if (oddsOfTrips and oddsOfFlush != 100 and oddsOfQuads != 100):
         text += "Three of a Kind: " + str(oddsOfTrips) + "%\n"
     
-    if (oddsOfFlush):
+    if (oddsOfFlush and oddsOfQuads != 100):
         text += "Flush: " + str(oddsOfFlush) + "%\n"
+
+    if (oddsOfQuads):
+        text += "Quads: " + str(oddsOfQuads) + "%\n"
     
     text += "\nPress the back to start button to start a new round:"
 
@@ -178,8 +190,17 @@ def helpHandler(update, context):
 
     query = update.callback_query
 
+    text = "Help Menu: \n\n"
+    text += "- Use C, D, H and S to represent the suits of your cards.\n"
+    text += "- Use 2, 3, 4, 5, 6, 7, 8, 9, T, J, Q, K, A to represent the numbers of your cards. Take note that 10 is represented by T.\n"
+    text += "- The format of each card is number then suit: e.g. KH, TC or 4D.\n"
+    text += "- When entering the cards in your hand or in the flop, enter each card separated by a space. e.g. KH KD for your hand, or 5D 6C 7S for the flop.\n"
+    text += "- If you've already made a better hand, the probabilities of obtaining worse hands will not be shown."
+    text += "- Currently, this bot only calculates the probabilities of making a pair, three of a kind, flush, and quads. If the probability is 0, it won't be shown.\n\n"
+    text += "If you have questions, please Telegram @goopod or @ivannedly. Thank you for using this service! Hope you win!"
+
     if (query.data == "help"):
-        context.bot.send_message(text = f'HELP',
+        context.bot.send_message(text = text,
                                  chat_id = chatid,
                                  parse_mode = ParseMode.HTML,
                                  reply_markup = InlineKeyboardMarkup(menus.startMenu))
