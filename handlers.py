@@ -36,18 +36,19 @@ def start(update, context):
 def preFlopHandler(update, context):
 
     message = update.message.text
+    chatid = update.message.chat.id
 
     cards = cardParser.parseCardsInHand(message)
 
     if (cards == "error"):
-        context.bot.send_message(text = f'Error! Try again!',
+        context.bot.send_message(text = f'Error with parsing your input! PLease try again:',
                                 chat_id = chatid,
                                 parse_mode = ParseMode.HTML,
                                 reply_markup = InlineKeyboardMarkup(menus.startMenu))
         return PREFLOP
 
     if (not isHandValid(cards)):
-        context.bot.send_message(text = f"I've detected a duplicate card!",
+        context.bot.send_message(text = f"I've detected a duplicate card! Please try again:",
                                 chat_id = chatid,
                                 parse_mode = ParseMode.HTML,
                                 reply_markup = InlineKeyboardMarkup(menus.startMenu))
@@ -87,18 +88,19 @@ def preFlopHandler(update, context):
 def flopHandler(update, context):
 
     message = update.message.text
+    chatid = chatid = update.message.chat.id
 
     cards = cardParser.parseCardsInFlop(message)
 
     if (cards == "error"):
-        context.bot.send_message(text = f'Error! Try again!',
+        context.bot.send_message(text = f'Error with parsing your input! PLease try again:',
                                 chat_id = chatid,
                                 parse_mode = ParseMode.HTML,
                                 reply_markup = InlineKeyboardMarkup(menus.startMenu))
         return FLOP
 
     if (not isFlopValid(cards)):
-        context.bot.send_message(text = f"I've detected a duplicate card!",
+        context.bot.send_message(text = f"I've detected a duplicate card! Please try again:",
                                 chat_id = chatid,
                                 parse_mode = ParseMode.HTML,
                                 reply_markup = InlineKeyboardMarkup(menus.startMenu))
@@ -138,18 +140,19 @@ def flopHandler(update, context):
 def turnHandler(update, context):
 
     message = update.message.text
+    chatid = update.message.chat.id
 
     card = cardParser.parseCardsInTurn(message)
 
     if (card == "error"):
-        context.bot.send_message(text = f'Error! Try again!',
+        context.bot.send_message(text = f'Error with parsing your input! PLease try again:',
                                 chat_id = chatid,
                                 parse_mode = ParseMode.HTML,
                                 reply_markup = InlineKeyboardMarkup(menus.startMenu))
         return TURN
 
     if (not isTurnValid(card)):
-        context.bot.send_message(text = f"I've detected a duplicate card!",
+        context.bot.send_message(text = f"I've detected a duplicate card! Please try again:",
                                 chat_id = chatid,
                                 parse_mode = ParseMode.HTML,
                                 reply_markup = InlineKeyboardMarkup(menus.startMenu))
